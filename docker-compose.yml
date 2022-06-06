@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  # Container 1
+  exchange-server:
+    container_name: exchange-server
+    build: exchange-server
+    ports: # ROOT MACHINE : CONTAINER
+      - "8000:80"
+    networks:
+      - intowow
+
+  # Container 2
+  bidder-server:
+    container_name: bidder-server
+    build: bidder-server
+    networks:
+      - intowow
+
+networks:
+  intowow:
+
+# docker compose up
+# 把 exchange-server / bidder-server run 起來
+# docker run -p 8000:80 exchange-server
+
+# original steps:
+# build -> run -> stop -> rm
+
+# docker-compose way:
+# docker compose up --build
+# docker compose down
