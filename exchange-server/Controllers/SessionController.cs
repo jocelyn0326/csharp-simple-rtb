@@ -90,6 +90,15 @@ namespace exchange_server.Controllers
 
         }
 
+        [Route("~/session_id")]
+        // GET /session_id
+        [HttpGet]
+        public Dictionary<string,bool> Get()
+        {
+            return _service.GetCurrentSessions();
+        }
+
+
         private SessionResponse PostInitToBidder(InitSessionRequest postData)
         {
             var url = postData.bidders.FirstOrDefault().endpoint + "init_session";

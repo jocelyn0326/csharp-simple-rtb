@@ -33,7 +33,10 @@ namespace exchange_server.Services
             return result;
         }
 
+        public Dictionary<string, bool> GetCurrentSessions() {
+            return this.SessionStatusDic;
+        }
 
-    }
+           }
   
 }
