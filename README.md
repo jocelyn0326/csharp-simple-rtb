@@ -14,19 +14,15 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 ## How to run the project?
 1. Open [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 2. cd to current project  which contains **docker-compose.yml**
-3. `docker compose up --build`
-
- ![](https://i.imgur.com/YJQVEnP.png)
-
-4. `docker-compose up`
+3. `docker-compose up`
 
 ![](https://i.imgur.com/SPzJHht.png)
 
-5. Check the image status: `docker compose ps`
+4. Check the image status: `docker compose ps`
 
  ![](https://i.imgur.com/cVEnqlh.png)
 
-6. How to delete and shutdown the container: `docker compose down`
+5. How to delete and shutdown the container: `docker compose down`
 
 ![](https://i.imgur.com/XaecxUy.png)
 
