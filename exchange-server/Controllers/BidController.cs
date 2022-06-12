@@ -19,8 +19,6 @@ namespace exchange_server.Controllers
     [ApiController]
     public class BidController : ControllerBase
     {
-        private const string EXCHANGEURL = "https://localhost:44352/";
-
         // GET: api/<BidController>
         [HttpGet]
         public IEnumerable<string> Get()

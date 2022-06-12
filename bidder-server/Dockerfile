@@ -8,7 +8,7 @@ COPY . .
 WORKDIR "/src/."
 RUN dotnet build "bidder-server.csproj" -c Release -o /app/build
 FROM build AS publish
-RUN dotnet publish "bidder-server.csproj" -c Release -o /app/publish
+RUN dotnet publish "bidder-server.csproj" --no-cache -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

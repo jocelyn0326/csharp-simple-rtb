@@ -7,17 +7,19 @@ namespace exchange_server.Models.SessionModel
 {
     public class InitSessionRequest
     {
-        private readonly string endpoint = "https://localhost:44340/";
+        //private readonly string ENDPOINT = "https://localhost:44340/";
+        private readonly string ENDPOINT = "http://bidder-server/";
+
 
         public InitSessionRequest()
         {
             this.session_id = Guid.NewGuid().ToString();
             this.bidders = new List<Bidder>() {
-                new Bidder{name="A",endpoint =  endpoint},
-                new Bidder{name="B",endpoint =  endpoint},
-                new Bidder{name="C",endpoint =  endpoint},
-                new Bidder{name="D",endpoint =  endpoint},
-                new Bidder{name="E",endpoint =  endpoint}
+                new Bidder{name="A",endpoint =  ENDPOINT},
+                new Bidder{name="B",endpoint =  ENDPOINT},
+                new Bidder{name="C",endpoint =  ENDPOINT},
+                new Bidder{name="D",endpoint =  ENDPOINT},
+                new Bidder{name="E",endpoint =  ENDPOINT}
 
             };
            

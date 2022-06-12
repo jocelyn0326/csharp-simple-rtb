@@ -21,7 +21,7 @@ namespace exchange_server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddScoped<ISessionScoped, Session>();
+
             services.AddSingleton<SessionService, SessionService>();
             services.AddControllers();
                 services.AddSwaggerGen(c =>
@@ -40,7 +40,7 @@ namespace exchange_server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "exchange_server v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
