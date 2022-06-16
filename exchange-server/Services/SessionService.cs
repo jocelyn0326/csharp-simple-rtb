@@ -1,4 +1,5 @@
-﻿using exchange_server.Models.SessionModel;
+﻿using exchange_server.Models.BidModel;
+using exchange_server.Models.SessionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +8,21 @@ namespace exchange_server.Services
 {
     public class SessionService
     {
-        Dictionary<string, bool> SessionStatusDic;
+        Dictionary<string, SessionData> SessionStatusDic;
         public SessionService()
         {
             if (SessionStatusDic == null) {
-                SessionStatusDic = new Dictionary<string, bool>();
+                SessionStatusDic = new Dictionary<string, SessionData>();
             } 
         }
         /// <summary>
         /// While post init_session
         /// </summary>
         /// <param name="session_id"></param>
-        internal void AddSession(string session_id)
+        internal void AddSession(InitSessionRequest req)
         {
-            SessionStatusDic.Add(session_id, true);
+            SessionData sessionData = new SessionData(req);
+            SessionStatusDic.Add(req.session_id, sessionData);
         }
         /// <summary>
         /// While post end_session
@@ -28,12 +30,43 @@ namespace exchange_server.Services
         internal bool EndSession(string session_id)
         {
             bool result = false;
-            if (SessionStatusDic.ContainsKey(session_id) && SessionStatusDic[session_id] == true)
+            if (SessionStatusDic.ContainsKey(session_id))
             {
-                SessionStatusDic[session_id] = false;
+                SessionStatusDic.Remove(session_id);
                 result = true;
             }
             return result;
+        }
+
+        internal void AddBidRequest(BidRequest req)
+        {
+
+            SessionStatusDic[req.session_id].BidRequestDic.Add(req.request_id, req);
+
+        }
+
+        internal string CheckBidRequestValidation(BidRequest req)
+        {
+            if (!SessionStatusDic.ContainsKey(req.session_id))
+            {
+                return "Please check if your session_id exists.";
+
+            }
+            if (!CheckRequestIdUniqueness(req.session_id, req.request_id))
+            {
+                return "request_id must be unique.";
+            }
+            return String.Empty;
+        }
+
+        private bool CheckRequestIdUniqueness(string session_id, string request_id)
+        {
+
+            if (SessionStatusDic[session_id].BidRequestDic.ContainsKey(request_id))
+            {
+                return false;
+            }
+            return true;
         }
 
         internal bool CheckBidderNameUniqueness(List<Bidder> bidders)
@@ -49,7 +82,7 @@ namespace exchange_server.Services
             return true;
         }
 
-        internal bool CheckSessionUniqueness(string session_id)
+        internal bool CheckSessionIdUniqueness(string session_id)
         {
             if (SessionStatusDic.ContainsKey(session_id)){
                 return false;
@@ -57,10 +90,24 @@ namespace exchange_server.Services
             return true;
         }
 
-        internal Dictionary<string, bool> GetCurrentSessions() {
-            return this.SessionStatusDic;
+        internal Dictionary<string, SessionData> GetCurrentSessions() {
+            return SessionStatusDic;
         }
 
     }
-  
+
+    public class SessionData
+    {
+        public SessionData(InitSessionRequest request)
+        {
+            this.sessionRequest = request;
+            if (BidRequestDic == null)
+            {
+                BidRequestDic = new Dictionary<string, BidRequest>();
+            }
+        }
+        public InitSessionRequest sessionRequest { get; set; }
+
+        public Dictionary<string, BidRequest> BidRequestDic { get; set; }
+    }
 }

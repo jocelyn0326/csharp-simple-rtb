@@ -19,26 +19,26 @@ namespace exchange_server.Controllers
     {
 
         private readonly SessionService _service;
-        public SessionController( SessionService service)
+        public SessionController(SessionService service)
         {
             _service = service;
         }
         [Route("~/init_session")]
         // POST /init_session
         [HttpPost]
-        public SessionResponse Post(InitSessionRequest req)
+        public SessionResponse Post([FromBody] InitSessionRequest req)
         {
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (_service.CheckSessionUniqueness(req.session_id) && _service.CheckBidderNameUniqueness(req.bidders))
+                    if (_service.CheckSessionIdUniqueness(req.session_id) && _service.CheckBidderNameUniqueness(req.bidders))
                     {
                         SessionResponse response = PostInitToBidder(req);
                         if (response.result == HttpStatusCode.OK)
                         {
-                            _service.AddSession(req.session_id);
+                            _service.AddSession(req);
                         }
                         return response;
                     }
@@ -66,7 +66,7 @@ namespace exchange_server.Controllers
         [Route("~/end_session")]
         // POST /end_session
         [HttpPost]
-        public SessionResponse Post(EndSessionRequest req)
+        public SessionResponse Post([FromBody] EndSessionRequest req)
         {
             if (ModelState.IsValid)
             {
@@ -84,7 +84,7 @@ namespace exchange_server.Controllers
                         }
                         else
                         {
-                            return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"Fail to end this session: {req.session_id}. This session_id is no longer exist." };
+                            return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"Fail to end this session: {req.session_id}. This session_id does not exist." };
                         }
                     }
                     else
@@ -108,7 +108,7 @@ namespace exchange_server.Controllers
         [Route("~/session_id")]
         // GET /session_id
         [HttpGet]
-        public Dictionary<string,bool> Get()
+        public Dictionary<string, SessionData> Get()
         {
             return _service.GetCurrentSessions();
         }

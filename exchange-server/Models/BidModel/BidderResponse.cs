@@ -1,6 +1,6 @@
 ﻿namespace exchange_server.Models.BidModel
 {
-    public class BidResponses
+    public class BidderResponse
     {
         /// <summary>
         /// Bidder name

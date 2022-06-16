@@ -20,7 +20,7 @@ namespace exchange_server.Models.BidModel
         /// </summary>
         public WinBid win_bid { get; set; }
 
-        public List<BidResponses> bidResponses { get; set; }
+        public List<BidderResponse> bidResponses { get; set; }
 
     }
 }

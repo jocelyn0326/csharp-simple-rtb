@@ -1,5 +1,7 @@
 ﻿using exchange_server.Models.BidModel;
+using exchange_server.Models.CommonModel;
 using exchange_server.Models.SessionModel;
+using exchange_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,36 +21,57 @@ namespace exchange_server.Controllers
     [ApiController]
     public class BidController : ControllerBase
     {
-        // GET: api/<BidController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly SessionService _service;
+        public BidController(SessionService service)
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<BidController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            _service = service;
         }
 
         // POST api/<BidController>
+
+        [Route("~/bid_request")]
         [HttpPost]
-        public BidResponse Post([FromBody] BidRequest req)
+        [ProducesResponseType(200, Type = typeof(BidResponse))]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
+
+        public IActionResult Post([FromBody] BidRequest req)
         {
-            // todo:how to set expire time?
-            int timeout = req.timeout_ms;
-            // checkValidation
-            CheckBidValid();
+
+            if (ModelState.IsValid) {
+                try
+                {
+                    // todo:how to set expire time?
+                    int timeout = req.timeout_ms.Value;
+                    string bidRequestErrorMessage = _service.CheckBidRequestValidation(req);
+                    if (String.IsNullOrEmpty(bidRequestErrorMessage))
+                    {
+                        _service.AddBidRequest(req);
+                        BidResponse bidResponse = new BidResponse();
+                        return Ok(bidResponse);
+
+                    }
+                    else
+                    {
+                        HttpErrorMessage httpErrorMessage = new HttpErrorMessage();
+                        httpErrorMessage.error= bidRequestErrorMessage;
+                        return BadRequest(httpErrorMessage);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    HttpErrorMessage httpErrorMessage = new HttpErrorMessage();
+                    httpErrorMessage.error = ex.Message;
+                    return BadRequest(httpErrorMessage);
+
+                }
+
+            }
+                
 
             return null;
         }
 
-        private void CheckBidValid()
-        {
-            
-        }
+
 
         
     }
