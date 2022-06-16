@@ -33,9 +33,23 @@ namespace exchange_server.Controllers
             {
                 try
                 {
-                    _service.AddSession(req.session_id);
-                    return PostInitToBidder(req);
-                }catch(Exception ex)
+                    if (_service.CheckSessionUniqueness(req.session_id) && _service.CheckBidderNameUniqueness(req.bidders))
+                    {
+                        SessionResponse response = PostInitToBidder(req);
+                        if (response.result == HttpStatusCode.OK)
+                        {
+                            _service.AddSession(req.session_id);
+                        }
+                        return response;
+                    }
+                    else
+                    {
+                        return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid. Each session_id & bidders' name must be unique" };
+
+                    }
+
+                }
+                catch(Exception ex)
                 {
                     return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"session_id: {req.session_id}, {ex.Message}" };
                 }
@@ -58,6 +72,7 @@ namespace exchange_server.Controllers
             {
                 try
                 {
+                   
                     SessionResponse bidResponse = PostEndToBidder(req);
                     if (bidResponse.result== HttpStatusCode.OK)
                     {

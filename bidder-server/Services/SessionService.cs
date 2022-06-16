@@ -1,37 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using bidder_server.Models.BidModel;
+using bidder_server.Models.SessionModel;
+using System.Collections.Generic;
 
 namespace bidder_server.Services
 {
     public class SessionService
     {
-        Dictionary<string, bool> SessionStatusDic;
+        /// <summary>
+        /// Collect current session_id's Bidder situation.
+        /// </summary>
+        Dictionary<string, BidderData> SessionBidderStatusDic;
         public SessionService()
         {
-            if (SessionStatusDic == null)
+            if (SessionBidderStatusDic == null)
             {
-                SessionStatusDic = new Dictionary<string, bool>();
+                SessionBidderStatusDic = new Dictionary<string, BidderData>();
             }
         }
         /// <summary>
-        /// While post init_session
+        /// Collect all the session & bidder's information.
         /// </summary>
         /// <param name="session_id"></param>
-        public void AddSession(string session_id)
+        public bool AddSession(string session_id, SessionRequest request)
         {
-            SessionStatusDic.Add(session_id, true);
+            // session_id is unique
+            if (!SessionBidderStatusDic.ContainsKey(session_id)) {
+
+                BidderData bidderData = new BidderData(request);
+                SessionBidderStatusDic.Add(session_id, bidderData);
+                return true;
+            }
+            return false;
         }
         /// <summary>
         /// While post end_session
         /// </summary>
         public bool EndSession(string session_id)
         {
-            bool result = false;
-            if (SessionStatusDic.ContainsKey(session_id) && SessionStatusDic[session_id] == true)
+            // If the key(session_id) is not exit in the SessionStatusDic, return false.
+            if (!SessionBidderStatusDic.ContainsKey(session_id))
             {
-                SessionStatusDic[session_id] = false;
-                result = true;
+                return false;
             }
-            return result;
+            // Remove the key(session_id
+            SessionBidderStatusDic.Remove(session_id);
+            return true;
         }
     }
 }

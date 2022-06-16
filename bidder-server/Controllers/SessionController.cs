@@ -1,4 +1,5 @@
-﻿using bidder_server.Models.SessionModel;
+﻿using bidder_server.Models.BidModel;
+using bidder_server.Models.SessionModel;
 using bidder_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -20,23 +21,20 @@ namespace bidder_server.Controllers
         // POST api/<SessionController>
         [Route("~/init_session")]
         [HttpPost]
-        public SessionResponse Post([FromBody] SessionRequest req)
+        public SessionResponse Post(SessionRequest req)
         {
             if (ModelState.IsValid)
             {
-                _service.AddSession(req.session_id);
-
-                SessionRequest sessionRequest = new SessionRequest()
+                
+                if(_service.AddSession(req.session_id, req))
                 {
+                    return new SessionResponse() { result = HttpStatusCode.OK };
+                }
+                else
+                {
+                    return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid. Session_id must be unique" };
+                }
 
-                    session_id = req.session_id,
-                    estimated_traffic = req.estimated_traffic,
-                    bidder_setting = req.bidder_setting,
-
-
-                };
-
-                return new SessionResponse() { result = HttpStatusCode.OK };
             }
             else
             {

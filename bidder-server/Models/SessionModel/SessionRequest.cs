@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bidder_server.Models.BidModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,7 +22,11 @@ namespace bidder_server.Models.SessionModel
         public int? estimated_traffic { get; set; }
 
         public BidderSetting bidder_setting { get; set; }
-       
+        /// <summary>
+        /// Array of object
+        /// </summary>  
+        [Required]
+        public List<Bidder> bidders { get;  set; }
 
     }
 }
