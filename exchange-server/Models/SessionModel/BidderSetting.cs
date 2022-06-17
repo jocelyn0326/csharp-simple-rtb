@@ -8,7 +8,9 @@ namespace exchange_server.Models.SessionModel
         /// <summary>
         /// Minimum bid for this bid request. (Precision: Two digits after the decimal point.)
         /// </summary>
-        [Range(typeof(decimal), "0", "79228162514264337593543950335"), Required]
+        [Required]
+        [RegularExpression(@"\d+(\.\d{1,2})?", ErrorMessage = "Invalid price, Precision: Two digits after the decimal point.")]
+        [Range(typeof(decimal), "0.01", "79228162514264337593543950335")]
         public decimal? budget{ get; set; }
         /// <summary>
         /// between 0 and 1000000
