@@ -40,7 +40,7 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 #### Control concurrent sessions by using dependency injection & singleton design pattern.
 
 
-### POST/init_session
+### POST /init_session
 url: http://localhost:8000/init_session
 
 
@@ -83,7 +83,7 @@ Response code 400, returned by Model Validation:
 
 
 ---
-### POST/bid_request
+### `POST /bid_request`
 url: http://localhost:8000/bid_request
 
 ```
@@ -122,7 +122,7 @@ Response code 400
 ---
 
 
-### Get/session_id
+### `Get /session_id`
 url: http://localhost:8000/session_id/
 #### Used for Test only, to get current session id and status.
 **Response format:**
@@ -139,13 +139,13 @@ url: http://localhost:8000/session_id/
 ---
 
 
-### POST/init_session
+### `POST /end_session`
 url: http://localhost:8000/end_session/
 **Request formate:**
 
 | Property | Type | Description |
 | -------- | -------- | -------- |
-| session_id     | string     | Get by **Get/session_id**    |
+| session_id     | string     | Get by **`Get /session_id`**    |
 
 
 ```
