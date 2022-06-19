@@ -139,7 +139,7 @@ namespace exchange_server.Controllers
 
         private SessionResponse PostEndToBidder(EndSessionRequest postData)
         {
-            var url = postData.endpoint + "end_session";
+            var url = _service.GetBidderEndpoint(postData.session_id) + "end_session";
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
             httpRequest.ContentType = "application/json";
             httpRequest.Method = "POST";

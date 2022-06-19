@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using bidder_server.Models.BidModel;
+using bidder_server.Models.CommonModel;
+using bidder_server.Models.WinBidModel;
+using bidder_server.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,36 +16,67 @@ namespace bidder_server.Controllers
     [ApiController]
     public class BidController : ControllerBase
     {
-        // GET: api/<BidController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly SessionService _service;
+        public BidController(SessionService service)
         {
-            return new string[] { "value1", "value2" };
+            _service = service;
         }
 
-        // GET api/<BidController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<BidController>
+       
         [HttpPost]
-        public void Post([FromBody] string value)
+        [ProducesResponseType(200, Type = typeof(BidResponse))]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
+        [Route("~/bid_request")]// POST api/<BidController>
+        public IActionResult Post([FromBody] BidRequest req)
         {
+            try
+            {
+                if (ModelState.IsValid) {
+                    return Ok(_service.GetBidPrice(req));
+                }
+                else
+                {
+                    return BadRequest("The Model is Invalidate.");
+                }
+
+            }
+            catch(Exception ex)
+            {
+                HttpErrorMessage httpErrorMessage = new HttpErrorMessage();
+                httpErrorMessage.error = ex.Message;
+                return BadRequest(httpErrorMessage);
+
+            }
+
+        }
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
+        [Route("~/notify_win_bid")]// POST api/<BidController>
+        [HttpPost]
+        public IActionResult Post([FromBody] NotifyWinBidRequest req)
+        {
+            try
+            {
+                if (_service.WinNotify(req)){
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("The bidder doesn't have suffcient budget.");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                HttpErrorMessage httpErrorMessage = new HttpErrorMessage();
+                httpErrorMessage.error = ex.Message;
+                return BadRequest(httpErrorMessage);
+
+            }
+
         }
 
-        // PUT api/<BidController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
 
-        // DELETE api/<BidController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

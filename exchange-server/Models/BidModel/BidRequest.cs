@@ -46,6 +46,6 @@ namespace exchange_server.Models.BidModel
             get;
             set;
         }
-
+        public string name { get; set; }
     }
 }

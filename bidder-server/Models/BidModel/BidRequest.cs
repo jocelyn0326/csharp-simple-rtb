@@ -39,7 +39,14 @@ namespace bidder_server.Models.BidModel
         /// <summary>
         /// Unique Id of the bid request
         /// </summary>
+        [Required]
         public string request_id { get; set; }
+
+        /// <summary>
+        /// bidder name
+        /// </summary>
+        [Required]
+        public string name { get; set; }
 
 
     }

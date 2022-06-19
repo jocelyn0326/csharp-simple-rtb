@@ -1,4 +1,5 @@
 ﻿using bidder_server.Models.BidModel;
+using bidder_server.Models.CommonModel;
 using bidder_server.Models.SessionModel;
 using bidder_server.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,47 +21,51 @@ namespace bidder_server.Controllers
         }
         // POST api/<SessionController>
         [Route("~/init_session")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
         [HttpPost]
-        public SessionResponse Post(SessionRequest req)
+        public IActionResult Post([FromBody] SessionRequest req)
         {
             if (ModelState.IsValid)
             {
                 
                 if(_service.AddSession(req.session_id, req))
                 {
-                    return new SessionResponse() { result = HttpStatusCode.OK };
+                    return Ok();
                 }
                 else
                 {
-                    return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid. Session_id must be unique" };
+                    return BadRequest("The request is invalid. Session_id must be unique");
                 }
 
             }
             else
             {
-                return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid." };
+                return  BadRequest("The request is invalid.");
             }
         }
 
-        [Route("~/end_session")]
         // POST api/<SessionController>/end_session
+        [Route("~/end_session")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
         [HttpPost]
-        public SessionResponse Post(EndSessionRequest req)
+        public IActionResult Post([FromBody] EndSessionRequest req)
         {
             if (ModelState.IsValid)
             {
                 if (_service.EndSession(req.session_id))
                 {
-                    return new SessionResponse() { result = HttpStatusCode.OK };
+                    return Ok();
                 }
                 else
                 {
-                    return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "This session_id is no longer exist." };
+                    return BadRequest("This session_id is no longer exist.");
                 }
             }
             else
             {
-                return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid." };
+                return BadRequest("The request is invalid.");
 
             }
 

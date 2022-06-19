@@ -7,6 +7,13 @@ namespace exchange_server.Models.BidModel
 {
     public class BidResponse
     {
+        public BidResponse()
+        {
+            if(bidderResponses == null)
+            {
+                bidderResponses = new List<BidderResponse>();
+            }
+        }
         /// <summary>
         /// Unique Id of the session
         /// </summary>
@@ -20,7 +27,7 @@ namespace exchange_server.Models.BidModel
         /// </summary>
         public WinBid win_bid { get; set; }
 
-        public List<BidderResponse> bidResponses { get; set; }
+        public List<BidderResponse> bidderResponses { get; set; }
 
     }
 }

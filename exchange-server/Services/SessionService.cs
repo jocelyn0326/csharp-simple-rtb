@@ -8,11 +8,11 @@ namespace exchange_server.Services
 {
     public class SessionService
     {
-        Dictionary<string, SessionData> SessionStatusDic;
+        Dictionary<string, SessionData> SessionInfoDic;
         public SessionService()
         {
-            if (SessionStatusDic == null) {
-                SessionStatusDic = new Dictionary<string, SessionData>();
+            if (SessionInfoDic == null) {
+                SessionInfoDic = new Dictionary<string, SessionData>();
             } 
         }
         /// <summary>
@@ -22,7 +22,7 @@ namespace exchange_server.Services
         internal void AddSession(InitSessionRequest req)
         {
             SessionData sessionData = new SessionData(req);
-            SessionStatusDic.Add(req.session_id, sessionData);
+            SessionInfoDic.Add(req.session_id, sessionData);
         }
         /// <summary>
         /// While post end_session
@@ -30,9 +30,9 @@ namespace exchange_server.Services
         internal bool EndSession(string session_id)
         {
             bool result = false;
-            if (SessionStatusDic.ContainsKey(session_id))
+            if (SessionInfoDic.ContainsKey(session_id))
             {
-                SessionStatusDic.Remove(session_id);
+                SessionInfoDic.Remove(session_id);
                 result = true;
             }
             return result;
@@ -41,13 +41,13 @@ namespace exchange_server.Services
         internal void AddBidRequest(BidRequest req)
         {
 
-            SessionStatusDic[req.session_id].BidRequestDic.Add(req.request_id, req);
+            SessionInfoDic[req.session_id].BidRequestDic.Add(req.request_id, req);
 
         }
 
         internal string CheckBidRequestValidation(BidRequest req)
         {
-            if (!SessionStatusDic.ContainsKey(req.session_id))
+            if (!SessionInfoDic.ContainsKey(req.session_id))
             {
                 return "Please check if your session_id exists.";
 
@@ -59,14 +59,47 @@ namespace exchange_server.Services
             return String.Empty;
         }
 
+        internal List<Bidder> GestSessionBidders(string session_id)
+        {
+            return SessionInfoDic[session_id].sessionRequest.bidders.ToList();
+        }
+
         private bool CheckRequestIdUniqueness(string session_id, string request_id)
         {
 
-            if (SessionStatusDic[session_id].BidRequestDic.ContainsKey(request_id))
+            if (SessionInfoDic[session_id].BidRequestDic.ContainsKey(request_id))
             {
                 return false;
             }
             return true;
+        }
+        
+        /// <summary>
+        /// First Price auction
+        /// Return null if highest bid is less than floor_price
+        /// If there're same highest price bids, return the first bidder.
+        /// </summary>
+        /// <param name="bidders"></param>
+        /// <returns></returns>
+        internal WinBid PickAWinner(List<BidderResponse> bidders,decimal floor_price)
+        {
+
+            WinBid winbid = new WinBid() {
+                price = 0
+            };
+            foreach(var bidder in bidders)
+            {
+                if(bidder.price > winbid.price)
+                {
+                    winbid.name = bidder.name;
+                    winbid.price = bidder.price;
+                }
+            }
+            if (winbid.price < floor_price)
+            {
+                return null;
+            }
+            return winbid;
         }
 
         internal bool CheckBidderNameUniqueness(List<Bidder> bidders)
@@ -82,16 +115,30 @@ namespace exchange_server.Services
             return true;
         }
 
+        internal string GetBidderEndpoint(string session_id)
+        {
+            if (SessionInfoDic.ContainsKey(session_id))
+            {
+                var bidder = SessionInfoDic[session_id].sessionRequest.bidders.FirstOrDefault();
+                if (null != bidder)
+                {
+                    return bidder.endpoint;
+                }
+                return String.Empty;
+            }
+            return String.Empty;
+        }
+
         internal bool CheckSessionIdUniqueness(string session_id)
         {
-            if (SessionStatusDic.ContainsKey(session_id)){
+            if (SessionInfoDic.ContainsKey(session_id)){
                 return false;
             }
             return true;
         }
 
         internal Dictionary<string, SessionData> GetCurrentSessions() {
-            return SessionStatusDic;
+            return SessionInfoDic;
         }
 
     }
