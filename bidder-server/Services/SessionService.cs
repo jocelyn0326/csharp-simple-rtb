@@ -100,8 +100,11 @@ namespace bidder_server.Services
             {
                 SessionBidHistory[req.session_id].BidderResponseDicForUser[req.user_id].BidderResponsesDic.Add(response.name, response.price);
             }
+            else
+            {
+                SessionBidHistory[req.session_id].BidderResponseDicForUser[req.user_id].BidderResponsesDic[response.name] = response.price;
+            }
 
-            SessionBidHistory[req.session_id].BidderResponseDicForUser[req.user_id].BidderResponsesDic[response.name] = response.price;
 
             #endregion
             return response;
@@ -111,7 +114,7 @@ namespace bidder_server.Services
         {
             var bidderStatus = SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name];
             bidderStatus.remaining_budget -= req.clear_price;
-            bidderStatus.remaining_impression_goal += 1;
+            bidderStatus.remaining_impression_goal -= 1;
             if (bidderStatus.remaining_budget <0)
             {
                 return false;
