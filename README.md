@@ -34,63 +34,104 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 
 
 
+
 ## API Introduction
 
 #### Control concurrent sessions by using dependency injection & singleton design pattern.
 
 
 ### POST/init_session
+url: http://localhost:8000/init_session
 
-**Request formate:**
-
-| Property | Type | Description |
-| -------- | -------- | -------- |
-| session_id     | string     | Generate from Constructor     |
-|estimated_traffic |int | Get from request|
-|Bidder-name| string     | Generate from Constructor     |
-|Bidder-endpoint| string     | Generate from Constructor     |
-|BidderSetting-budget| int|Get from request|
-|BidderSetting-impression_goal| int|Get from request|
 
 ```
 {
-    "estimated_traffic": 5,
-    "bidder_setting": {
-        "budget": 1000,
-        "impression_goal": 100
+  "session_id": "1",
+  "estimated_traffic": 10,
+  "bidders": [
+    {
+      "name": "A",
+      "endpoint": "https://bidder-server/"
+    },
+    {
+      "name": "C",
+      "endpoint": "https://bidder-server/"
+    },
+    {
+      "name": "B",
+      "endpoint": "https://bidder-server/"
     }
+  ],
+  "bidder_setting": {
+    "budget": 10,
+    "impression_goal": 2
+  }
 }
+
 ```
 
-**Response format:**
-| Property | Type | Description |
-| -------- | -------- | -------- |
-| result     | HttpStatusCode     |      |
-|error |string | Custom error message|
+
 
 Response code 200:
-![](https://i.imgur.com/UR92W0C.png)
+![](https://i.imgur.com/3P1cxdb.png)
 
 
-**Remove budget parameter from request data:**
+**Remove session_id param from request data:**
 Response code 400, returned by Model Validation:
-![](https://i.imgur.com/9zr1yVv.png)
 
 
+
+---
+### POST/bid_request
+url: http://localhost:8000/bid_request
+
+```
+{
+  "floor_price": 2,
+  "timeout_ms": 500,
+  "session_id": "1",
+  "user_id": "jocelyn",
+  "request_id": "1"
+}
+
+```
+Response code 200:
+
+![](https://i.imgur.com/nvB8TJj.png)
+ 
+          
+          
+**Send the same request again with request_id:**
+Response code 400
+![](https://i.imgur.com/2ZOIeH5.png)
+
+**Send the session_id which is not exist:**
+Response code 400
+```
+{
+  "floor_price": 2,
+  "timeout_ms": 500,
+  "session_id": "100",
+  "user_id": "jocelyn",
+  "request_id": "1"
+}
+```
+![](https://i.imgur.com/QXNa0uR.png)
 
 ---
 
 
 ### Get/session_id
+url: http://localhost:8000/session_id/
 #### Used for Test only, to get current session id and status.
 **Response format:**
 
  | Type | Description |
  | -------- | -------- |
-| string    |session_id added by **POST/session_init**     |
-|bool | session current status|
+| Dictionary<string, SessionData>    | created by **POST/session_init**     |
 
-![](https://i.imgur.com/7eu5Qtw.png)
+![](https://i.imgur.com/FN4eksd.png)
+
 
 
 
@@ -98,7 +139,7 @@ Response code 400, returned by Model Validation:
 
 
 ### POST/init_session
-
+url: http://localhost:8000/end_session/
 **Request formate:**
 
 | Property | Type | Description |
@@ -108,7 +149,7 @@ Response code 400, returned by Model Validation:
 
 ```
 {
-    "session_id": "e35623ca-4c86-497a-b1fc-b5299fb0d87a"
+    "session_id": "1"
 }
 ```
 
