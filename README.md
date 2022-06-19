@@ -30,8 +30,7 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 ## How to test the project?
 
 ### Test flow:
-![](https://i.imgur.com/pPKw8Jz.gif)
-
+![](https://i.imgur.com/nUL2vo3.gif)
 
 
 
