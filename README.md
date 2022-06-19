@@ -39,7 +39,7 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 #### Control concurrent sessions by using dependency injection & singleton design pattern.
 
 
-### POST /init_session
+### `POST /init_session`
 url: http://localhost:8000/init_session
 
 
