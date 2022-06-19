@@ -19,21 +19,6 @@ namespace bidder_server.Models.BidModel
         [Range(0, 1000000), Required]
         public int? session_remaining_estimated_traffic { get; set; }
 
-        public BidderData(SessionRequest request)
-        {
-            this.session_remaining_estimated_traffic = request.estimated_traffic;
-            this.BiddersStatusDic = new Dictionary<string, BidderCurrentStatus>();
-            BidderCurrentStatus bidderCurrentStatus = new BidderCurrentStatus() {
-                remaining_budget = request.bidder_setting.budget.Value,
-                remaining_impression_goal = request.bidder_setting.impression_goal.Value
-
-            };
-            foreach (var bidder in request.bidders)
-            {
-                BiddersStatusDic.Add(bidder.name, bidderCurrentStatus);
-            }
-        }
-
         
     }
 

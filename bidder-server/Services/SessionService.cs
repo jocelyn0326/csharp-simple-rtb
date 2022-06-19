@@ -66,7 +66,7 @@ namespace bidder_server.Services
             double max = (double)bidderStatus.remaining_budget;
             decimal price = req.floor_price;
             //To bid: 1.remaining_impression_goal > 0 2. floor_price>remaining_budget 3. If wins the bid, the bidder still has enought budget to get other impressions.
-            if (bidderStatus.remaining_impression_goal > 0 && bidderStatus.remaining_budget >= req.floor_price   &&  ((bidderStatus.remaining_budget - req.floor_price) / (bidderStatus.remaining_impression_goal - 1)) >= (decimal)0.01 ) 
+            if (bidderStatus.remaining_impression_goal > 0 && bidderStatus.remaining_budget >= req.floor_price ) 
             {
                 do
                 {
@@ -76,7 +76,7 @@ namespace bidder_server.Services
                     double scaled = (sample * range) + min;
                     price = Decimal.Round((decimal)scaled,2);
                     max = (double)price;
-                } while (((bidderStatus.remaining_budget - price) / (bidderStatus.remaining_impression_goal - 1)) < (decimal)0.01);
+                } while ((bidderStatus.remaining_impression_goal - 1) > 0 && (((bidderStatus.remaining_budget - price) / (bidderStatus.remaining_impression_goal - 1)) < (decimal)0.01));
                 response.name = req.name;
                 response.price = price;
             }
@@ -112,10 +112,9 @@ namespace bidder_server.Services
 
         internal bool WinNotify(NotifyWinBidRequest req)
         {
-            var bidderStatus = SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name];
-            bidderStatus.remaining_budget -= req.clear_price;
-            bidderStatus.remaining_impression_goal -= 1;
-            if (bidderStatus.remaining_budget <0)
+            SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name].remaining_budget -= req.clear_price;
+            SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name].remaining_impression_goal -= 1;
+            if (SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name].remaining_budget < 0)
             {
                 return false;
             }
@@ -133,8 +132,23 @@ namespace bidder_server.Services
             // session_id is unique
             if (!SessionBidderStatusDic.ContainsKey(session_id)) {
 
-                BidderData bidderData = new BidderData(request);
-                SessionBidderStatusDic.Add(session_id, bidderData);
+                BidderData bidderData = new BidderData();
+                bidderData.session_remaining_estimated_traffic = request.estimated_traffic;
+                if (bidderData.BiddersStatusDic == null)
+                {
+                    bidderData.BiddersStatusDic = new Dictionary<string, BidderCurrentStatus>();
+                    foreach (var bidder in request.bidders)
+                    {
+                        BidderCurrentStatus bidderCurrentStatus = new BidderCurrentStatus()
+                        {
+                            remaining_budget = request.bidder_setting.budget.Value,
+                            remaining_impression_goal = request.bidder_setting.impression_goal.Value
+
+                        };
+                        bidderData.BiddersStatusDic.Add(bidder.name, bidderCurrentStatus);
+                    }
+                    SessionBidderStatusDic.Add(session_id, bidderData);
+                }
                 return true;
             }
             return false;
