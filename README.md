@@ -18,7 +18,7 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 
 ![](https://i.imgur.com/SPzJHht.png)
 
-4. Check the image status: `docker compose ps`
+4. Check the status of containers: `docker compose ps`
 
  ![](https://i.imgur.com/cVEnqlh.png)
 
@@ -78,6 +78,7 @@ Response code 200:
 
 **Remove session_id param from request data:**
 Response code 400, returned by Model Validation:
+![](https://i.imgur.com/ewbTMtt.png)
 
 
 
