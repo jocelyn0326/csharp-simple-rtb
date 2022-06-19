@@ -12,6 +12,5 @@ RUN dotnet publish "bidder-server.csproj" --no-cache -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN apt update && apt install -y curl
 ENTRYPOINT ["dotnet", "bidder-server.dll"]
 

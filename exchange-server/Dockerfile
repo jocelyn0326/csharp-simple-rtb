@@ -13,6 +13,5 @@ RUN dotnet publish "exchange-server.csproj" --no-cache -c Release -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN apt update && apt install -y curl
 ENTRYPOINT ["dotnet", "exchange-server.dll"]
 
