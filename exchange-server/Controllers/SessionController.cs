@@ -1,4 +1,5 @@
-﻿using exchange_server.Models.SessionModel;
+﻿using exchange_server.Models.CommonModel;
+using exchange_server.Models.SessionModel;
 using exchange_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -24,9 +25,11 @@ namespace exchange_server.Controllers
             _service = service;
         }
         [Route("~/init_session")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
         // POST /init_session
         [HttpPost]
-        public SessionResponse Post([FromBody] InitSessionRequest req)
+        public IActionResult Post([FromBody] InitSessionRequest req)
         {
 
             if (ModelState.IsValid)
@@ -40,24 +43,24 @@ namespace exchange_server.Controllers
                         {
                             _service.AddSession(req);
                         }
-                        return response;
+                        return Ok();
                     }
                     else
                     {
-                        return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid. Each session_id & bidders' name must be unique" };
+                        return BadRequest("The request is invalid. Each session_id & bidders' name must be unique");
 
                     }
 
                 }
                 catch(Exception ex)
                 {
-                    return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"session_id: {req.session_id}, {ex.Message}" };
+                    return BadRequest($"session_id: {req.session_id}, {ex.Message}" );
                 }
                 
             }
             else
             {
-                return new SessionResponse() { result = HttpStatusCode.BadRequest, error= "The request is invalid." };
+                return BadRequest( "The request is invalid.");
             }
            
 
@@ -65,8 +68,10 @@ namespace exchange_server.Controllers
 
         [Route("~/end_session")]
         // POST /end_session
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(HttpErrorMessage))]
         [HttpPost]
-        public SessionResponse Post([FromBody] EndSessionRequest req)
+        public IActionResult Post([FromBody] EndSessionRequest req)
         {
             if (ModelState.IsValid)
             {
@@ -80,27 +85,27 @@ namespace exchange_server.Controllers
                         if (endSessionSucceed) 
                         {
 
-                            return new SessionResponse() { result = HttpStatusCode.OK };
+                            return Ok();
                         }
                         else
                         {
-                            return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"Fail to end this session: {req.session_id}. This session_id does not exist." };
+                            return BadRequest($"Fail to end this session: {req.session_id}. This session_id does not exist.");
                         }
                     }
                     else
                     {
-                        return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"Fail to end this session: {req.session_id}. {bidResponse.error}" };
+                        return BadRequest($"Fail to end this session: {req.session_id}. {bidResponse.error}");
 
                     }
                 }
                 catch (Exception ex)
                 {
-                    return new SessionResponse() { result = HttpStatusCode.BadRequest, error = $"Fail to end this session: {req.session_id}, {ex.Message}" };
+                    return BadRequest($"Fail to end this session: {req.session_id}, {ex.Message}");
                 }
             }
             else
             {
-                return new SessionResponse() { result = HttpStatusCode.BadRequest, error = "The request is invalid." };
+                return BadRequest("The request is invalid.");
             }
 
         }
