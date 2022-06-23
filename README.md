@@ -4,8 +4,6 @@
 ## Summary
 Implement two http servers: an exchange server and a bidder according to Intowow’s simplified version RTB protocol.
 
-Currently I have completed two APIs on both servers: init_session and end_session.
-
 ## Environment
 [.NET 5](https://docs.microsoft.com/zh-tw/dotnet/core/whats-new/dotnet-5)
 
