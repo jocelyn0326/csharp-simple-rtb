@@ -30,7 +30,8 @@ Currently I have completed two APIs on both servers: init_session and end_sessio
 ## How to test the project?
 
 ### Test flow:
-![](https://i.imgur.com/nUL2vo3.gif)
+
+![](https://i.imgur.com/44DgIZ9.gif)
 
 
 
@@ -50,15 +51,15 @@ url: http://localhost:8000/init_session
   "bidders": [
     {
       "name": "A",
-      "endpoint": "https://bidder-server/"
+      "endpoint": "http://bidder-server/"
     },
     {
       "name": "C",
-      "endpoint": "https://bidder-server/"
+      "endpoint": "http://bidder-server/"
     },
     {
       "name": "B",
-      "endpoint": "https://bidder-server/"
+      "endpoint": "http://bidder-server/"
     }
   ],
   "bidder_setting": {
@@ -72,12 +73,19 @@ url: http://localhost:8000/init_session
 
 
 Response code 200:
-![](https://i.imgur.com/3P1cxdb.png)
+![](https://i.imgur.com/HV1rIeV.png)
+
 
 
 **Remove session_id param from request data:**
 Response code 400, returned by Model Validation:
 ![](https://i.imgur.com/ewbTMtt.png)
+
+**Post same session_id**
+![](https://i.imgur.com/KndrLzo.png)
+
+**Post same bidder_name**
+![](https://i.imgur.com/NxJuyzt.png)
 
 
 
@@ -118,24 +126,13 @@ Response code 400
 ```
 ![](https://i.imgur.com/QXNa0uR.png)
 
----
-
-
-### `Get /session_id`
-url: http://localhost:8000/session_id/
-#### Used for Test only, to get current session id and status.
-**Response format:**
-
- | Type | Description |
- | -------- | -------- |
-| Dictionary<string, SessionData>    | created by **POST/session_init**     |
-
-![](https://i.imgur.com/FN4eksd.png)
-
-
-
+**Occur request timeout:**
+![](https://i.imgur.com/o6xZUVd.png)
 
 ---
+
+
+
 
 
 ### `POST /end_session`
@@ -159,9 +156,27 @@ url: http://localhost:8000/end_session/
 | result     | HttpStatusCode     |      |
 |error |string | Custom error message|
 
-![](https://i.imgur.com/H6aDo0T.png)
+Response code: 200
+![](https://i.imgur.com/ydrSeSm.png)
+
 
 #### Try to end the same session:
 Response code: 400
-![](https://i.imgur.com/cjCjn7E.png)
+![](https://i.imgur.com/5ZXzBIy.png)
+
+---
+
+### `Get /session_id`
+url: http://localhost:8000/session_id/
+#### Used for Test only, to get current session id and status.
+**Response format:**
+
+ | Type | Description |
+ | -------- | -------- |
+| Dictionary<string, SessionData>    | created by **POST/session_init**     |
+
+![](https://i.imgur.com/FN4eksd.png)
+
+
+
 

@@ -40,7 +40,7 @@ namespace bidder_server.Services
 
             var bidderStatus = SessionBidderStatusDic[req.session_id].BiddersStatusDic[req.name];
 
-            #region Check if the user_id is posted, the bidded price for the bidder have enough remaining budget, and the imression goal has reached.
+            #region Step1.Check if the user_id is posted, the bidded price for the bidder have enough remaining budget, and whether impression goal has reached.
             if (SessionBidHistory.ContainsKey(req.session_id) && SessionBidHistory[req.session_id].BidderResponseDicForUser.ContainsKey(req.user_id) && SessionBidHistory[req.session_id].BidderResponseDicForUser[req.user_id].BidderResponsesDic.ContainsKey(req.name))
             {
                 var bidderHistoryPrice = SessionBidHistory[req.session_id].BidderResponseDicForUser[req.user_id].BidderResponsesDic[req.name];
@@ -60,7 +60,7 @@ namespace bidder_server.Services
             }
             #endregion
 
-            #region If the bidder should bid
+            #region Step2. Check if the bidder should bid
 
             double min = (double)req.floor_price;
             double max = (double)bidderStatus.remaining_budget;
@@ -87,7 +87,8 @@ namespace bidder_server.Services
                 response.price = -1;
             }
             #endregion
-            #region Add bid response into SessionBidHistory
+
+            #region Step3. Add bid response into SessionBidHistory
 
             if (!SessionBidHistory.ContainsKey(req.session_id)){
                 SessionBidHistory.Add(req.session_id, new BidHistory());
