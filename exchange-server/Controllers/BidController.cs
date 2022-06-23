@@ -137,7 +137,7 @@ namespace exchange_server.Controllers
             httpRequest.Method = "POST";
 
             httpRequest.Accept = "application/json";
-
+            httpRequest.Timeout = postData.timeout_ms.Value;
 
             using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
             {
