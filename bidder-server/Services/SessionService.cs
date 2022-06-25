@@ -3,7 +3,6 @@ using bidder_server.Models.SessionModel;
 using bidder_server.Models.WinBidModel;
 using System;
 using System.Collections.Generic;
-using static bidder_server.Models.BidModel.BidHistory;
 
 namespace bidder_server.Services
 {
@@ -65,7 +64,7 @@ namespace bidder_server.Services
             double min = (double)req.floor_price;
             double max = (double)bidderStatus.remaining_budget;
             decimal price = req.floor_price;
-            //To bid: 1.remaining_impression_goal > 0 2. floor_price>remaining_budget 3. If wins the bid, the bidder still has enought budget to get other impressions.
+            //To bid: 1.remaining_impression_goal > 0 2. floor_price >= remaining_budget 3. If wins the bid, the bidder still has enought budget to get other impressions.
             if (bidderStatus.remaining_impression_goal > 0 && bidderStatus.remaining_budget >= req.floor_price ) 
             {
                 do
@@ -108,6 +107,7 @@ namespace bidder_server.Services
 
 
             #endregion
+
             return response;
         }
 
