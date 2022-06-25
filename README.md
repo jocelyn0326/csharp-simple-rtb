@@ -35,9 +35,6 @@ Implement two http servers: an exchange server and a bidder according to Intowow
 
 ## API Introduction
 
-#### Control concurrent sessions by using dependency injection & singleton design pattern.
-
-
 ### `POST /init_session`
 url: http://localhost:8000/init_session
 
