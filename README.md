@@ -1,4 +1,4 @@
-# Simplified Real Time Bidding - 郭宜萱(jocelyn0326@gmail.com)
+# Simplified Real Time Bidding
 
 
 ## Summary
